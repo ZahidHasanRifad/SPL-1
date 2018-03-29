@@ -47,6 +47,7 @@ string withoutPunc (string s)
 /* this function takes a vector which have words.
     calculate the number of same word occurences.
     store the word and the number of occurences in a map and return the map.
+    
 */
 map<string, int> wordFrequency(vector<string> s)
 {
