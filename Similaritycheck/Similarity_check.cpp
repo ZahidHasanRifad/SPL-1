@@ -62,11 +62,6 @@ map<string, int> wordFrequency(vector<string> s)
         cout << "no words" << endl;
     }
     sort(s.begin(), s.end());
-
-    //for(int i=0; i<s.size(); i++)
-    //{
-     //   cout << s[i] << endl;
-    //}
     s.push_back(" ");
     word = s[0];
     countword = 1;
