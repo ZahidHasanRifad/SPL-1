@@ -218,7 +218,7 @@ double caltulateIDF(int numberOfTerms, int numberOfDocuments)
 {
     double result;
     double re=(double) numberOfDocuments/numberOfTerms;
-    result =(double) log(re);
+    result =(double) (1+log(re));
     return result;
 }
 double calculateWeight(double tf, double idf)
