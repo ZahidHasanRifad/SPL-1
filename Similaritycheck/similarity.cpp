@@ -25,7 +25,7 @@ int getnumberofline(ifstream &file)
 /// this function takes a string and return a string which have no punctuation mark.
 string withoutPunc (string s)
 {
-    string p = ",.?;:!(){}[]<>/\|";
+    string p = ",.?;:!(){}[]";
     string ss;
 
     for(int i=0; i<p.length(); i++)
@@ -75,9 +75,16 @@ map<string, int> wordFrequency(vector<string> s)
         //cout << "word is " << word << " s[i] is " << s[i] << " countword is " << countword << endl;
         if(word != s[i])
         {
+            //cout << "inside if condition" << endl;
+            //cout<< endl;
+            //cout << "word is " << word << " s[i] is " << s[i] << " countword is " << countword << endl;
+            //cout << word << "appered " << countword << "times" << endl;
             frequency[word] = countword;
             countword = 0;
             word = s[i];
+            //cout << "word is " << word << " s[i] is " << s[i] << " countword is " << countword << endl;
+            //cout << "outside if condition" << endl;
+            //cout << endl;
         }
         countword++;
         //cout << "word is " << word << " s[i] is " << s[i] << " countword is " << countword << endl;
@@ -170,7 +177,13 @@ vector<string> getWithoutStopWords(vector<string> words)
         check[s] = true;
         //cout << "pushed " << s << " into check" << endl;
     }
-
+/*
+    for(map<string, bool>:: iterator i = check.begin(); i!=check.end(); i++)
+    {
+        cout << "in check" << i->first << endl;
+    }
+    cout << "check size is : " << check.size() << endl;
+*/
     ifstream stopwordfile;
     stopwordfile.open("stop_words.txt");
     if(stopwordfile.is_open())
@@ -193,7 +206,12 @@ vector<string> getWithoutStopWords(vector<string> words)
         withoutStop.push_back(it->first);
         //cout << "in map" << it->first << endl;
     }
-
+/*
+    for(int i=0; i<withoutStop.size(); i++)
+    {
+        cout << "in withoutStop " << withoutStop[i] << endl;
+    }
+*/
     for(int i=0; i<words.size(); i++)
     {
         for(int j=0; j<withoutStop.size(); j++)
@@ -210,7 +228,33 @@ vector<string> getWithoutStopWords(vector<string> words)
     word.clear();
     return v;
 }
-
+/*
+vector<string> removestopword(vector<string> v)
+{
+    vector<string> stopwords;
+    vector<string> freshwords;
+    cout << "into the function" << endl;
+    stopwords = getStopWords();
+    cout << "get stop word" << endl;
+    int j=0;
+    for(int i=0; i<stopwords.size()-1; i++)
+    {
+        cout << "inside for loop" << endl;
+        if(stopwords[i] != v[j])
+        {
+            cout << "if condition" << endl;
+            freshwords.push_back(v[j]);
+            cout << "pushed " << freshwords[i] << endl;
+            cout << j << endl;
+        }
+        else
+            cout << "stop word: " <<  v[j] << endl;
+        j++;
+    }
+    cout << "before return" << endl;
+    return freshwords;
+}
+*/
 
 double calculateTF(int numberOfTerms, int totalTerms)
 {
@@ -222,7 +266,7 @@ double caltulateIDF(int numberOfTerms, int numberOfDocuments)
 {
     double result;
     double re=(double) numberOfDocuments/numberOfTerms;
-    result =(double) log(re);
+    result =(double) (1+log(re));
     return result;
 }
 double calculateWeight(double tf, double idf)
@@ -240,10 +284,10 @@ map<string, double> TF(vector<string> ttv)
 
     tv = getWithoutStopWords(ttv);                    // getting fresh word.
     rowtfm = wordFrequency(tv);                        // getting term and number of term.
-    int totalterm = rowtfm.size();                      // total number of term of a document.
-
+    int totalterm = tv.size();                      // total number of term of a document.
+    cout << "withoutstopwords total words is " << ttv.size() << endl;
     cout << "Total Term is: " << totalterm << endl;
-    cout << "In row " << rowtfm.size() << endl;
+    //cout << "In row " << rowtfm.size() << endl;
     for(map<string, int> :: iterator it = rowtfm.begin(); it != rowtfm.end(); it++)
     {
         string term = it->first;
@@ -259,7 +303,30 @@ map<string, double> TF(vector<string> ttv)
     return tfm;
 
 }
+/*
+map<string, double> IDF(vector<string> tdv, int numberOfDocuments)
+{
+    map<string, double> idfm;
+    map<string, int> rowdfm;
+    vector<string> dv;
 
+    dv = getWithoutStopWords(tdv);
+    rowdfm = wordFrequency(dv);
+
+    for(map<string, int> :: iterator it = rowdfm.begin(); it != rowdfm.end(); it++)
+    {
+        string term = it->first;
+        int freq = it->second;
+        double idf = (double) caltulateIDF(freq, numberOfDocuments);
+        idfm[term] = idf;
+    }
+
+    dv.clear();
+    rowdfm.clear();
+    return idfm;
+}
+
+*/
 map<string, double> IDF2(vector<string> totalwordofdocuments, vector<string> *dtv, int numberOfDocuments)
 {
 
@@ -268,7 +335,9 @@ map<string, double> IDF2(vector<string> totalwordofdocuments, vector<string> *dt
     vector<string> u;
     map<string, double> idfm;
     map<string, int> rowfrq[numberOfDocuments];
+
     vector<string> doct[numberOfDocuments];
+    //vector<string> uniq[numberOfDocuments];
 
     tv = getWithoutStopWords(totalwordofdocuments);                 // get total words of documents.
     u = uniquewords(tv);                                            // get the unique words of documents.
@@ -278,8 +347,10 @@ map<string, double> IDF2(vector<string> totalwordofdocuments, vector<string> *dt
     for(int i=0; i<numberOfDocuments; i++)
     {
         doct[i] = getWithoutStopWords(dtv[i]);                      // get total word of a document.
-        rowfrq[i] = wordFrequency(doct[i]);                         // get the rowcount of word of a document.
-        //cout << "in IDF2 row count for file " << i+1 << "is" << rowfrq[i].size() << endl;
+        rowfrq[i] = wordFrequency(doct[i]);
+        //uniq[i] = uniquewords(doct[i]);                         // get the rowcount of word of a document.
+        cout << "in IDF2 row count for file " << i+1 << "is" << rowfrq[i].size() << endl;
+        //cout << "in IDF2 row count for file " << i+1 << "is" << uniq[i].size() << endl;
     }
     cout << " IDF2 totalword is " << totalword << endl;
 
@@ -290,21 +361,26 @@ map<string, double> IDF2(vector<string> totalwordofdocuments, vector<string> *dt
         {
 
             for(map<string, int>:: iterator it = rowfrq[j].begin(); it!=rowfrq[j].end(); it++)
+            //for(int k=0; k<uniq[i].size(); k++)
             {
                 if(t == it->first)
+            //    if(t==uniq[i][k])
                 {
                     countdf++;
                 }
             }
         }
         //cout << "count of word "<< t <<  " in document is : " << countdf << endl;
-
-        idfm[t] = caltulateIDF(countdf, numberOfDocuments);
+        double idfv = caltulateIDF(countdf, numberOfDocuments);
+        //if(idfv == 1)
+        	//cout << "Similar word is " << t << endl;
+        idfm[t] = idfv;
         countdf = 0;
     }
     for(int i=0; i<numberOfDocuments; i++)
     {
         rowfrq[i].clear();
+        //uniq[i].clear();
         doct[i].clear();
     }
     tv.clear();
@@ -373,6 +449,85 @@ double* getScoreforFile(map<string, double> *tf, map<string, double> totalscore,
     return score;
 }
 
+map<string, double> wordVectorofDocument(map<string, double> tf, map<string, double> score)
+{
+	map<string, double> vec;
+
+	for(map<string, double>:: iterator it = tf.begin(); it!=tf.end(); it++)
+	{
+		string s = it->first;
+		for(map<string, double>:: iterator its = score.begin(); its!=score.end(); its++)
+		{
+			if(s == its->first)
+			{
+				vec[s] = its->second;
+			}
+		}
+	}
+	return vec;
+}
+
+map<string, double>* wordVectorofDocuments(map<string, double> *tf, map<string, double> score, int numberOfDocuments)
+{
+	map<string, double> vec[numberOfDocuments];
+	for(int i=0; i<numberOfDocuments; i++)
+	{
+		for(map<string, double>:: iterator it = tf[i].begin(); it!=tf[i].end(); it++)
+		{
+			string s = it->first;
+			for(map<string, double>:: iterator its = score.begin(); its!=score.end(); its++)
+			{
+				if(s == its->first)
+				{
+					vec[i][s] = its->second;
+				}
+			}
+		}
+	}
+
+	return vec;
+}
+
+double dotproduct(map<string, double> vec1, map<string, double> vec2)
+{
+	double result = 0.0;
+	map<string, double>:: iterator v2 = vec2.begin();
+	for(map<string, double>:: iterator v1 = vec1.begin(); (v1 != vec1.end()) && (v2 != vec2.end()); v1++)
+	{
+		double value1 = v1->second;
+		double value2 = v2->second;
+
+		result += value1*value2;
+		v2++;
+	}
+	return result;
+}
+
+double valueofVector(map<string, double> vec)
+{
+	double result = 0.0;
+	double samplesum = 0.0;
+	for(map<string, double>:: iterator v = vec.begin(); v != vec.end(); v++)
+	{
+		double value = v->second;
+		samplesum += value*value;
+	}
+
+	result = sqrt(samplesum);
+	return result;
+}
+
+double getCosineValue(map<string, double> vec1, map<string, double> vec2)
+{
+	double cosinevalue;
+
+	cosinevalue = (double) dotproduct(vec1, vec2)/(valueofVector(vec1)*valueofVector(vec2));
+
+	return cosinevalue;
+}
+
+
+
 void pritn(map<string, double> *tf, map<string, int> *rowfreq, map<string, double> idf, map<string, double> score, double *filescore, int numberOfDocuments)
 {
 
@@ -422,7 +577,7 @@ int main(void)
 {
     ifstream ifile, file1, file2, file3, file4, file5;
 
-    ofstream frequencyFile;
+    ofstream frequencyFile,cosinFile;
     vector<string> words[5];
     vector<string> uniqueword;
     vector<string> withoutstopwords;
@@ -435,23 +590,43 @@ int main(void)
     map<string, int> rowcou[5];
 
     vector<string> totalwords;
-    /*
-    vector<char[]> files;
+
+
+
+/*
     ifile.open("README.txt");
+    int numoffiles = getnumberofline(ifile);
+    ifstream file;
+    string filename;
     if(ifile.is_open())
     {
         while(ifile>>filename)
         {
-            files.push_back(filename);
-            cout << filename << endl;
+            file.open(filename);
+            if(file.is_open())
+            {
+                words = getTotalWords(file);
+            }
+            else
+                cout << "Can't open File." << endl;
         }
+
+    }
+    else
+        cout << "Can't open the README file." << endl;
+    */
+    /*
+    for(int i=0; i<words.size(); i++)
+    {
+        words[i] = withoutPunc(words[i]);
+        //cout << words[i] << endl;
     }
 */
+    string name66 = "File1.txt";
 
-
-    file1.open("File1.txt");
+    file1.open(name66);
     file2.open("File2.txt");
-    file3.open("File3.txt");
+    file3.open("../Similaritycheck/FileArchive/File3.txt");
     file4.open("File4.txt");
     file5.open("File5.txt");
     if(file1.is_open() && file2.is_open() && file3.is_open() && file4.is_open() && file5.is_open())
@@ -462,7 +637,9 @@ int main(void)
         words[3] = getTotalWords(file4);
         words[4] = getTotalWords(file5);
     }
-    for(int i=0; i<5; i++)
+
+    int numberOfDocuments = 5;
+    for(int i=0; i<numberOfDocuments; i++)
     {
         withoutforeach[i] = getWithoutStopWords(words[i]);
         rowcou[i] = wordFrequency(withoutforeach[i]);
@@ -478,32 +655,172 @@ int main(void)
     withoutstopwords = getWithoutStopWords(totalwords);
     rowfreq = wordFrequency(withoutstopwords);
 
-    for(int i=0; i<5; i++)
+    for(int i=0; i<numberOfDocuments; i++)
     {
         //cout << "File " << i+1 << endl;
         tf[i] = TF(words[i]);
-
+        //for(map<string, double> :: iterator itf = tf[i].begin(); itf != tf[i].end(); itf++)
+        //{
+            //cout << itf->first << "         "  << itf->second << endl;
+        //}
+        //.cout << "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
     }
 
-    idf = IDF2(totalwords,words, 5);
+    idf = IDF2(totalwords,words, numberOfDocuments);
     //rowfreq = wordFrequency(withoutstopwords);
-    score = getscore(tf, idf, 5);
-
-    double* scores = new double[5];
-    scores = getScoreforFile(tf,score,5);
-
-    pritn(tf, rowcou, idf, score, scores, 5);
+    score = getscore(tf, idf, numberOfDocuments);
+    //map<string, double> :: iterator its = score.begin();
+    /*
+    for(its = score.begin(); its != score.end(); its++)
+    {
+        cout << its->first << " , " << its->second << endl;
+    }
+    */
+    //int files = words.size();
+    double* scores = new double[numberOfDocuments];
+    scores = getScoreforFile(tf,score,numberOfDocuments);
+    /*
+    for(int i=0; i<5; i++)
+    {
+        cout << "File" << i+1 << "score is " << scores[i] << endl;
+    }
+    /*
+    map<string, int>::iterator i = rowfreq.begin();
+    for(map<string, double> :: iterator it=idf.begin(); it!=idf.end() && i!=rowfreq.end(); it++)
+    {
+        cout << it->first << " , " << i->first << " , " << i->second << " , " << it->second << endl;
+        i++;
+    }
+    */
+    pritn(tf, rowcou, idf, score, scores, numberOfDocuments);
     cout << "total words is: idf " << idf.size() << endl;
     cout << "total words is: score " << score.size() << endl;
     cout << "total words in: rowfreq " << rowfreq.size() << endl;
 
+/*
+    map<string, double> vector1;
+    map<string, double> vector2;
+
+    vector1 = wordVectorofDocument(tf[0], score);
+    vector2 = wordVectorofDocument(tf[1], score);
+
+    double cosine = getCosineValue(vector1, vector2);
+
+    cout << "the cosine value is: " << cosine << endl;
+    */
+
+    cosinFile.open("Cosine.csv");
+    map<string, double> wordVectorofDocuments[numberOfDocuments];
+    double cosinevalues[numberOfDocuments][numberOfDocuments];
+    for(int i=0; i<numberOfDocuments; i++)
+    {
+    	wordVectorofDocuments[i] = wordVectorofDocument(tf[i], score);
+    }
+    cout << "the cosine values are "<< endl;
+    cosinFile << " " << "," <<"file1" << "," << "file2" << "," << "file3" << "," << "file4" << "," << "file5" << endl;
+    for(int i=0; i<numberOfDocuments; i++)
+    {
+        cosinFile << "file" << i+1 << ",";
+    	for(int j=0; j<numberOfDocuments; j++)
+    	{
+    		cosinevalues[i][j] = getCosineValue(wordVectorofDocuments[i], wordVectorofDocuments[j]);
+    		cout << cosinevalues[i][j] << " ";
+    		cosinFile << cosinevalues[i][j] << ",";
+
+    	}
+    	cout << endl;
+    	cosinFile << endl;
+    }
+    //double degree = acos(cosine);
+
+    //cout << "the degree is: " << degree << endl;
+
+    /*
+    for(int i=0; i<5; i++)
+    {
+        for(map<string, double>:: iterator itff= tf[i].begin(); itff != tf[i].end(); itff++)
+        {
+            map<string, double> :: iterator itss = score.begin();
+            map<string, int> :: iterator itrw = rowfreq.begin();
+            string ss = itff->first;
+            for(map<string, double> :: iterator itddf = idf.begin(); (itddf != idf.end() || itss != score.end() || itrw != rowfreq.end()); itddf++)
+            {
+                string ssd = itddf->first;
+                string sss = itss->first;
+                string ssr = itrw->first;
+                if((ss == ssd)&& (ss == sss) && (ss == ssr))
+                {
+
+                    cout << ss << " " << itrw->second << "  " <<  itff->second << "     " << ss << " " <<  itddf->second << "      " << ss << " " << itss->second << endl;
+
+                }
+                itss++;
+                itrw++;
+            //cout << ss << "     " << itff->second << endl;
+            }
+        }
+    }
+
+*/
+    //for(map<string, double> :: iterator it=tf[0].begin(); it!=tf[0].end() && i!=rowfreq.end(); it++)
+    //{
+      //  cout << it->first << " , " << i->first << " , " << i->second << " , " << it->second << endl;
+        //i++;
+    //}
+
+
+    //for(int i=0; i<words.size(); i++)
+    //{
+      //  cout << words[i] << endl;
+    //}
+
+
+
+///////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+/*
+    withoutstopwords = getWithoutStopWords(words);
+    cout << "total fresh words " << withoutstopwords.size() << endl;
+
+    frequencyFile.open("termFrequency.csv");
+    frequency = wordFrequency(withoutstopwords);
+    map<string, int> :: iterator it = frequency.begin();
+    for(it = frequency.begin(); it!=frequency.end(); it++)
+    {
+        cout << it->first << "," << it->second << endl;
+        if(!frequencyFile)
+        {
+            cout << "frequencyFile can't be opened." << endl;
+        }
+        else
+            frequencyFile << it->first << "," << it->second << endl;
+    }
+    uniqueword = uniquewords(withoutstopwords);
+
+    cout << "Unique words are" << endl;
+    for(int i=0; i<uniqueword.size(); i++)
+    {
+        cout << uniqueword[i] << endl;
+    }
+  ///////////////////////////////////////
+*/
+/*
+    //stopwords = getStopWords();
+    cout << "is segment" << endl;
+    fresh = removestopword(words);
+    cout << "after calling" << endl;
+    for(int i=0; i<fresh.size(); i++)
+    {
+        cout << fresh[i] << endl;
+
+    }
+  */
     //fresh.clear();
     uniqueword.clear();
     for(int i=0; i<5; i++)
     {
         words[i].clear();
         tf[i].clear();
-        rowcou[i].clear();
 
     }
     withoutstopwords.clear();

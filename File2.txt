@@ -1,4 +1,4 @@
-﻿All text file formats have the advantage that text is easy for humans to read and it is easy to write software to read text, but fixed-width formats are exceptional in that they are especially easy for humans to read because of the regular arrangement of values.  The main advantage of plain text formats is their simplicity: we do not require complex software to create a text file; we do not need esoteric skills beyond being able to type on a keyboard; it is easy for people to view and modify the data.
+All text file formats have the advantage that text is easy for humans to read and it is easy to write software to read text, but fixed-width formats are exceptional in that they are especially easy for humans to read because of the regular arrangement of values.  The main advantage of plain text formats is their simplicity: we do not require complex software to create a text file; we do not need esoteric skills beyond being able to type on a keyboard; it is easy for people to view and modify the data.
 
     Virtually all software packages can read and write text files. 
     Plain text files are portable across different computer platforms. 

@@ -25,7 +25,7 @@ int getnumberofline(ifstream &file)
 /// this function takes a string and return a string which have no punctuation mark.
 string withoutPunc (string s)
 {
-    string p = ",.?;:!(){}[]<>/\|";
+    string p = ",.?;:!(){}[]";
     string ss;
 
     for(int i=0; i<p.length(); i++)
@@ -75,9 +75,16 @@ map<string, int> wordFrequency(vector<string> s)
         //cout << "word is " << word << " s[i] is " << s[i] << " countword is " << countword << endl;
         if(word != s[i])
         {
+            //cout << "inside if condition" << endl;
+            //cout<< endl;
+            //cout << "word is " << word << " s[i] is " << s[i] << " countword is " << countword << endl;
+            //cout << word << "appered " << countword << "times" << endl;
             frequency[word] = countword;
             countword = 0;
             word = s[i];
+            //cout << "word is " << word << " s[i] is " << s[i] << " countword is " << countword << endl;
+            //cout << "outside if condition" << endl;
+            //cout << endl;
         }
         countword++;
         //cout << "word is " << word << " s[i] is " << s[i] << " countword is " << countword << endl;
@@ -170,7 +177,13 @@ vector<string> getWithoutStopWords(vector<string> words)
         check[s] = true;
         //cout << "pushed " << s << " into check" << endl;
     }
-
+/*
+    for(map<string, bool>:: iterator i = check.begin(); i!=check.end(); i++)
+    {
+        cout << "in check" << i->first << endl;
+    }
+    cout << "check size is : " << check.size() << endl;
+*/
     ifstream stopwordfile;
     stopwordfile.open("stop_words.txt");
     if(stopwordfile.is_open())
@@ -193,7 +206,12 @@ vector<string> getWithoutStopWords(vector<string> words)
         withoutStop.push_back(it->first);
         //cout << "in map" << it->first << endl;
     }
-
+/*
+    for(int i=0; i<withoutStop.size(); i++)
+    {
+        cout << "in withoutStop " << withoutStop[i] << endl;
+    }
+*/
     for(int i=0; i<words.size(); i++)
     {
         for(int j=0; j<withoutStop.size(); j++)
@@ -210,7 +228,33 @@ vector<string> getWithoutStopWords(vector<string> words)
     word.clear();
     return v;
 }
-
+/*
+vector<string> removestopword(vector<string> v)
+{
+    vector<string> stopwords;
+    vector<string> freshwords;
+    cout << "into the function" << endl;
+    stopwords = getStopWords();
+    cout << "get stop word" << endl;
+    int j=0;
+    for(int i=0; i<stopwords.size()-1; i++)
+    {
+        cout << "inside for loop" << endl;
+        if(stopwords[i] != v[j])
+        {
+            cout << "if condition" << endl;
+            freshwords.push_back(v[j]);
+            cout << "pushed " << freshwords[i] << endl;
+            cout << j << endl;
+        }
+        else
+            cout << "stop word: " <<  v[j] << endl;
+        j++;
+    }
+    cout << "before return" << endl;
+    return freshwords;
+}
+*/
 
 double calculateTF(int numberOfTerms, int totalTerms)
 {
@@ -259,7 +303,30 @@ map<string, double> TF(vector<string> ttv)
     return tfm;
 
 }
+/*
+map<string, double> IDF(vector<string> tdv, int numberOfDocuments)
+{
+    map<string, double> idfm;
+    map<string, int> rowdfm;
+    vector<string> dv;
 
+    dv = getWithoutStopWords(tdv);
+    rowdfm = wordFrequency(dv);
+
+    for(map<string, int> :: iterator it = rowdfm.begin(); it != rowdfm.end(); it++)
+    {
+        string term = it->first;
+        int freq = it->second;
+        double idf = (double) caltulateIDF(freq, numberOfDocuments);
+        idfm[term] = idf;
+    }
+
+    dv.clear();
+    rowdfm.clear();
+    return idfm;
+}
+
+*/
 map<string, double> IDF2(vector<string> totalwordofdocuments, vector<string> *dtv, int numberOfDocuments)
 {
 
@@ -435,19 +502,39 @@ int main(void)
     map<string, int> rowcou[5];
 
     vector<string> totalwords;
-    /*
-    vector<char[]> files;
+
+
+
+/*
     ifile.open("README.txt");
+    int numoffiles = getnumberofline(ifile);
+    ifstream file;
+    string filename;
     if(ifile.is_open())
     {
         while(ifile>>filename)
         {
-            files.push_back(filename);
-            cout << filename << endl;
+            file.open(filename);
+            if(file.is_open())
+            {
+                words = getTotalWords(file);
+            }
+            else
+                cout << "Can't open File." << endl;
         }
+
+    }
+    else
+        cout << "Can't open the README file." << endl;
+    */
+    /*
+    for(int i=0; i<words.size(); i++)
+    {
+        words[i] = withoutPunc(words[i]);
+        //cout << words[i] << endl;
     }
 */
-
+    string name  ;
 
     file1.open("File1.txt");
     file2.open("File2.txt");
@@ -482,28 +569,129 @@ int main(void)
     {
         //cout << "File " << i+1 << endl;
         tf[i] = TF(words[i]);
-
+        //for(map<string, double> :: iterator itf = tf[i].begin(); itf != tf[i].end(); itf++)
+        //{
+            //cout << itf->first << "         "  << itf->second << endl;
+        //}
+        //.cout << "////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////" << endl;
     }
 
     idf = IDF2(totalwords,words, 5);
     //rowfreq = wordFrequency(withoutstopwords);
     score = getscore(tf, idf, 5);
-
+    //map<string, double> :: iterator its = score.begin();
+    /*
+    for(its = score.begin(); its != score.end(); its++)
+    {
+        cout << its->first << " , " << its->second << endl;
+    }
+    */
+    //int files = words.size();
     double* scores = new double[5];
     scores = getScoreforFile(tf,score,5);
-
+    /*
+    for(int i=0; i<5; i++)
+    {
+        cout << "File" << i+1 << "score is " << scores[i] << endl;
+    }
+    /*
+    map<string, int>::iterator i = rowfreq.begin();
+    for(map<string, double> :: iterator it=idf.begin(); it!=idf.end() && i!=rowfreq.end(); it++)
+    {
+        cout << it->first << " , " << i->first << " , " << i->second << " , " << it->second << endl;
+        i++;
+    }
+    */
     pritn(tf, rowcou, idf, score, scores, 5);
     cout << "total words is: idf " << idf.size() << endl;
     cout << "total words is: score " << score.size() << endl;
     cout << "total words in: rowfreq " << rowfreq.size() << endl;
+    /*
+    for(int i=0; i<5; i++)
+    {
+        for(map<string, double>:: iterator itff= tf[i].begin(); itff != tf[i].end(); itff++)
+        {
+            map<string, double> :: iterator itss = score.begin();
+            map<string, int> :: iterator itrw = rowfreq.begin();
+            string ss = itff->first;
+            for(map<string, double> :: iterator itddf = idf.begin(); (itddf != idf.end() || itss != score.end() || itrw != rowfreq.end()); itddf++)
+            {
+                string ssd = itddf->first;
+                string sss = itss->first;
+                string ssr = itrw->first;
+                if((ss == ssd)&& (ss == sss) && (ss == ssr))
+                {
 
+                    cout << ss << " " << itrw->second << "  " <<  itff->second << "     " << ss << " " <<  itddf->second << "      " << ss << " " << itss->second << endl;
+
+                }
+                itss++;
+                itrw++;
+            //cout << ss << "     " << itff->second << endl;
+            }
+        }
+    }
+
+*/
+    //for(map<string, double> :: iterator it=tf[0].begin(); it!=tf[0].end() && i!=rowfreq.end(); it++)
+    //{
+      //  cout << it->first << " , " << i->first << " , " << i->second << " , " << it->second << endl;
+        //i++;
+    //}
+
+
+    //for(int i=0; i<words.size(); i++)
+    //{
+      //  cout << words[i] << endl;
+    //}
+
+
+
+///////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////
+/*
+    withoutstopwords = getWithoutStopWords(words);
+    cout << "total fresh words " << withoutstopwords.size() << endl;
+
+    frequencyFile.open("termFrequency.csv");
+    frequency = wordFrequency(withoutstopwords);
+    map<string, int> :: iterator it = frequency.begin();
+    for(it = frequency.begin(); it!=frequency.end(); it++)
+    {
+        cout << it->first << "," << it->second << endl;
+        if(!frequencyFile)
+        {
+            cout << "frequencyFile can't be opened." << endl;
+        }
+        else
+            frequencyFile << it->first << "," << it->second << endl;
+    }
+    uniqueword = uniquewords(withoutstopwords);
+
+    cout << "Unique words are" << endl;
+    for(int i=0; i<uniqueword.size(); i++)
+    {
+        cout << uniqueword[i] << endl;
+    }
+  ///////////////////////////////////////
+*/
+/*
+    //stopwords = getStopWords();
+    cout << "is segment" << endl;
+    fresh = removestopword(words);
+    cout << "after calling" << endl;
+    for(int i=0; i<fresh.size(); i++)
+    {
+        cout << fresh[i] << endl;
+
+    }
+  */
     //fresh.clear();
     uniqueword.clear();
     for(int i=0; i<5; i++)
     {
         words[i].clear();
         tf[i].clear();
-        rowcou[i].clear();
 
     }
     withoutstopwords.clear();
