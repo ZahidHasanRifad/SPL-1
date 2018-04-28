@@ -626,7 +626,7 @@ int main(void)
 
     file1.open(name66);
     file2.open("File2.txt");
-    file3.open("../Similaritycheck/FileArchive/File3.txt");
+    file3.open("../SE305 SPL-I/FileArchive/File3.txt");
     file4.open("File4.txt");
     file5.open("File5.txt");
     if(file1.is_open() && file2.is_open() && file3.is_open() && file4.is_open() && file5.is_open())
