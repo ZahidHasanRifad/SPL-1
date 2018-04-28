@@ -1,3 +1,4 @@
+#include <dirent.h>
 #include<iostream>
 #include<fstream>
 #include<string>
@@ -573,21 +574,86 @@ void pritn(map<string, double> *tf, map<string, int> *rowfreq, map<string, doubl
 
 }
 
+
+vector<string> open(string path)
+{
+
+    DIR* dir;
+    dirent* pdir;
+    vector<string> files;
+
+    dir = opendir(path.c_str());
+
+    while (pdir = readdir(dir)) {
+        files.push_back(pdir->d_name);
+    }
+
+    return files;
+}
+
+int isTextFile(string filename)
+{
+    for(int j=0; j<filename.length(); j++)
+    {
+        if(filename[j] == '.' && filename[j+1] == 't' && filename[j+2] == 'x' && filename[j+3] == 't')
+        {
+            //cout << filename << endl;
+            return 1;
+            break;
+        }
+
+
+    }
+    return 0;
+}
+
+vector<string> getTextFiles(string path)
+{
+    vector<string> f;
+    //string path;
+    vector<string> files;
+   // path = "C:\\Users\\HP\\Desktop";
+    f = open(path); // or pass which dir to open
+
+    ifstream file;
+    for(int i=0; i<f.size(); i++)
+    {
+        string filename = f[i];
+        if(isTextFile(filename))
+        {
+            files.push_back(f[i]);
+        }
+
+
+    }
+
+    return files;
+}
+
+
+
 int main(void)
 {
     ifstream ifile, file1, file2, file3, file4, file5;
 
+    vector<string> files;
+    string dirname = "../SE305 SPL-I/FileArchive";
+    files = getTextFiles(dirname);
+    int numberofDocument = files.size();
+
+
+
     ofstream frequencyFile,cosinFile;
-    vector<string> words[5];
+    vector<string> words[numberofDocument];
     vector<string> uniqueword;
     vector<string> withoutstopwords;
     vector<string> fresh;
-    vector<string> withoutforeach[5];
-    map<string, double> tf[5];
+    vector<string> withoutforeach[numberofDocument];
+    map<string, double> tf[numberofDocument];
     map<string, double> idf;
     map<string, double> score;
     map<string, int> rowfreq;
-    map<string, int> rowcou[5];
+    map<string, int> rowcou[numberofDocument];
 
     vector<string> totalwords;
 
@@ -622,23 +688,37 @@ int main(void)
         //cout << words[i] << endl;
     }
 */
-    string name66 = "File1.txt";
 
-    file1.open(name66);
-    file2.open("File2.txt");
-    file3.open("../SE305 SPL-I/FileArchive/File3.txt");
-    file4.open("File4.txt");
-    file5.open("File5.txt");
-    if(file1.is_open() && file2.is_open() && file3.is_open() && file4.is_open() && file5.is_open())
+    for(int i=0; i<numberofDocument; i++)
     {
-        words[0] = getTotalWords(file1);
-        words[1] = getTotalWords(file2);
-        words[2] = getTotalWords(file3);
-        words[3] = getTotalWords(file4);
-        words[4] = getTotalWords(file5);
+        //cout << files[i] << endl;
+        files[i] = dirname+"/"+files[i];
+    }
+    //string name66 = "File1.txt";
+
+    //file1.open(name66);
+    //file2.open("File2.txt");
+    //file3.open("../SE305 SPL-I/FileArchive/File3.txt");
+    //file4.open("File4.txt");
+    //file5.open("File5.txt");
+    ifstream file[numberofDocument];
+    for(int i=0; i<numberofDocument; i++)
+    {
+        //cout << files[i] << endl;
+        file[i].open(files[i]);
+        //cout << "file before open" << endl;
+        if(file[i].is_open())
+        {
+            //cout << "file opened" << endl;
+            words[i] = getTotalWords(file[i]);
+            //cout << "push to vector" << endl;
+        }
+        else
+            cout << "can't open " << files[i] << " " << endl;
+
     }
 
-    int numberOfDocuments = 5;
+    int numberOfDocuments = numberofDocument;
     for(int i=0; i<numberOfDocuments; i++)
     {
         withoutforeach[i] = getWithoutStopWords(words[i]);
@@ -717,7 +797,14 @@ int main(void)
     	wordVectorofDocuments[i] = wordVectorofDocument(tf[i], score);
     }
     cout << "the cosine values are "<< endl;
-    cosinFile << " " << "," <<"file1" << "," << "file2" << "," << "file3" << "," << "file4" << "," << "file5" << endl;
+    //cosinFile << " " << "," <<"file1" << "," << "file2" << "," << "file3" << "," << "file4" << "," << "file5" << endl;
+    cosinFile << " " ;
+    for(int i=0; i<numberOfDocuments; i++)
+    {
+        //cout << "," << "File" << i+1;
+        cosinFile << "," <<  "File" << i+1;
+    }
+    cosinFile << endl;
     for(int i=0; i<numberOfDocuments; i++)
     {
         cosinFile << "file" << i+1 << ",";
