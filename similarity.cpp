@@ -23,7 +23,7 @@ int getnumberofline(ifstream &file)
 }
 
 
-/// this function takes a string and return a string which have no punctuation mark.
+// this function takes a string and return a string which have no punctuation mark.
 string withoutPunc (string s)
 {
     string p = ",.?;:!(){}[]";
@@ -558,7 +558,7 @@ void pritn(map<string, double> *tf, map<string, int> *rowfreq, map<string, doubl
                     if((s==sd) && (s==ss))
                     {
                         //cout << s << "|            " << itf->second << "|              " << itdf->second << "|             " << its->second <<endl;
-                        cout << s << "," << rc << "," << itf->second << "," << itdf->second << "," << its->second <<endl;
+                        //cout << s << "," << rc << "," << itf->second << "," << itdf->second << "," << its->second <<endl;
                         file << s << "," << rc << "," << itf->second << "," << itdf->second << "," << its->second <<endl;
                     }
                     its++;
@@ -574,6 +574,19 @@ void pritn(map<string, double> *tf, map<string, int> *rowfreq, map<string, doubl
 
 }
 
+
+void makedoubelwordfile(vector<string> singlewords)
+{
+    ofstream bygramfile;
+    bygramfile.open("doublewordfile.txt");
+
+    for(int i=0; i<singlewords.size(); i++)
+    {
+        bygramfile << singlewords[i];
+        if(i%2 != 0)
+            bygramfile << " ";
+    }
+}
 
 vector<string> open(string path)
 {
@@ -694,6 +707,8 @@ int main(void)
         //cout << files[i] << endl;
         files[i] = dirname+"/"+files[i];
     }
+
+
     //string name66 = "File1.txt";
 
     //file1.open(name66);
@@ -902,14 +917,19 @@ int main(void)
 
     }
   */
-    //fresh.clear();
+    fresh.clear();
     uniqueword.clear();
-    for(int i=0; i<5; i++)
+    files.clear();
+    for(int i=0; i<numberofDocument; i++)
     {
         words[i].clear();
         tf[i].clear();
+        rowcou[i].clear();
+        withoutforeach[i].clear();
+
 
     }
+    totalwords.clear();
     withoutstopwords.clear();
     idf.clear();
     score.clear();
