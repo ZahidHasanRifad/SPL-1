@@ -716,20 +716,26 @@ int main(void)
     //file3.open("../SE305 SPL-I/FileArchive/File3.txt");
     //file4.open("File4.txt");
     //file5.open("File5.txt");
-    ifstream file[numberofDocument];
+    //ifstream file[numberofDocument];
     for(int i=0; i<numberofDocument; i++)
     {
         //cout << files[i] << endl;
-        file[i].open(files[i]);
+        ifstream file;
+        //ifstream doublewordfile;
+        //file[i].open(files[i]);
+        file.open(files[i]);
+
         //cout << "file before open" << endl;
-        if(file[i].is_open())
+        if(file.is_open())
         {
             //cout << "file opened" << endl;
-            words[i] = getTotalWords(file[i]);
+            words[i] = getTotalWords(file);
+
             //cout << "push to vector" << endl;
         }
         else
             cout << "can't open " << files[i] << " " << endl;
+        file.close();
 
     }
 
@@ -750,10 +756,51 @@ int main(void)
     withoutstopwords = getWithoutStopWords(totalwords);
     rowfreq = wordFrequency(withoutstopwords);
 
+    vector<string>doublewords[numberOfDocuments];
+    vector<string>totaldoublewords;
+    for(int i=0; i<numberOfDocuments; i++)
+    {
+        ifstream doublewordfile;
+        makedoubelwordfile(withoutforeach[i]);
+        doublewordfile.open("doublewordfile.txt");
+        doublewords[i] = getTotalWords(doublewordfile);
+
+        doublewordfile.close();
+        int a = remove("doublewordfile.txt");
+        if(a == 0)
+            cout << "file deleted" << endl;
+        else
+            cout << "error in deleting" << endl;
+
+    }
+    cout << "before" << endl;
+    for(int i=0; i<numberOfDocuments; i++)
+    {
+
+        for(int j=0; j<doublewords[i].size(); j++)
+        {
+            string s = doublewords[i][j];
+            totaldoublewords.push_back(s);
+            //cout << s << endl;
+        }
+    }
+
+    for(int i=0; i<totaldoublewords.size(); i++)
+    {
+        cout << totaldoublewords[i] << endl;
+    }
+
+
+    cout << "after" << endl;
+    map<string, double> tfdoubleword[numberofDocument];
+    map<string, double> idfdoubleword;
+    map<string, double> scoredoubleword;
+
     for(int i=0; i<numberOfDocuments; i++)
     {
         //cout << "File " << i+1 << endl;
         tf[i] = TF(words[i]);
+        tfdoubleword[i] = TF(doublewords[i]);
         //for(map<string, double> :: iterator itf = tf[i].begin(); itf != tf[i].end(); itf++)
         //{
             //cout << itf->first << "         "  << itf->second << endl;
@@ -762,8 +809,10 @@ int main(void)
     }
 
     idf = IDF2(totalwords,words, numberOfDocuments);
+    idfdoubleword = IDF2(totaldoublewords, doublewords, numberOfDocuments);
     //rowfreq = wordFrequency(withoutstopwords);
     score = getscore(tf, idf, numberOfDocuments);
+    scoredoubleword = getscore(tfdoubleword, idfdoubleword, numberOfDocuments);
     //map<string, double> :: iterator its = score.begin();
     /*
     for(its = score.begin(); its != score.end(); its++)
@@ -787,7 +836,8 @@ int main(void)
         i++;
     }
     */
-    pritn(tf, rowcou, idf, score, scores, numberOfDocuments);
+    //pritn(tf, rowcou, idf, score, scores, numberOfDocuments);
+    //pritn(tfdoubleword, rowcou, idf, score, scores, numberOfDocuments);
     cout << "total words is: idf " << idf.size() << endl;
     cout << "total words is: score " << score.size() << endl;
     cout << "total words in: rowfreq " << rowfreq.size() << endl;
@@ -809,7 +859,7 @@ int main(void)
     double cosinevalues[numberOfDocuments][numberOfDocuments];
     for(int i=0; i<numberOfDocuments; i++)
     {
-    	wordVectorofDocuments[i] = wordVectorofDocument(tf[i], score);
+    	wordVectorofDocuments[i] = wordVectorofDocument(tfdoubleword[i], scoredoubleword);
     }
     cout << "the cosine values are "<< endl;
     //cosinFile << " " << "," <<"file1" << "," << "file2" << "," << "file3" << "," << "file4" << "," << "file5" << endl;
@@ -924,14 +974,18 @@ int main(void)
     {
         words[i].clear();
         tf[i].clear();
+        tfdoubleword[i].clear();
         rowcou[i].clear();
         withoutforeach[i].clear();
+        doublewords[i].clear();
 
 
     }
     totalwords.clear();
     withoutstopwords.clear();
     idf.clear();
+    idfdoubleword.clear();
     score.clear();
+    scoredoubleword.clear();
     rowfreq.clear();
 }
