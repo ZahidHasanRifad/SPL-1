@@ -389,15 +389,15 @@ map<string, double> IDF2(vector<string> totalwordofdocuments, vector<string> *dt
     return idfm;
 }
 
-map<string, double> getscore(map<string, double> *tf, map<string, double> idf, int numberOfDocuments)
+map<string, double> getscore(map<string, double> tf, map<string, double> idf, int numberOfDocuments)
 {
     map<string, double> s;
-    for(int i=0; i<numberOfDocuments; i++)
-    {
-        map<string, double>:: iterator itf = tf[i].begin();
+    //for(int i=0; i<numberOfDocuments; i++)
+    //{
+        map<string, double>:: iterator itf = tf.begin();
         map<string, double>:: iterator itdf = idf.begin();
         //int j =0;
-        for(itf = tf[i].begin(); itf != tf[i].end(); itf++)
+        for(itf = tf.begin(); itf != tf.end(); itf++)
         {
             string stf = itf->first;
             //cout << stf << endl;
@@ -411,7 +411,7 @@ map<string, double> getscore(map<string, double> *tf, map<string, double> idf, i
                     double sc = calculateWeight(itf->second, itdf->second);
                     s[stf] = sc;
 
-                    //cout << stf << "    " << itf->second << "   "<< sdf << "    " << sc << endl;
+                   // cout << stf << "    " << itf->second << "   " << sdf << "    " << itdf ->second << "    " << sc << endl;
                 }
            //     k++;
             }
@@ -419,29 +419,29 @@ map<string, double> getscore(map<string, double> *tf, map<string, double> idf, i
             //j++ ;
         }
         ///cout << "j is    " << j <<endl;
-    }
+    //}
     return s;
 }
 
-double* getScoreforFile(map<string, double> *tf, map<string, double> totalscore, int numberOfDocuments)
+double* getScoreforFile(map<string, double> *totalscore, int numberOfDocuments)
 {
     //int files = tf.size();
     double* score = new double[numberOfDocuments];
     double coutnscore = 0.0;
     for(int i=0; i<numberOfDocuments; i++)
     {
-        for(map<string, double>:: iterator itf = tf[i].begin(); itf != tf[i].end(); itf++)
-        {
-            string s = itf->first;
-            for(map<string, double>:: iterator its = totalscore.begin(); its != totalscore.end(); its++)
+        //for(map<string, double>:: iterator itf = tf[i].begin(); itf != tf[i].end(); itf++)
+        //{
+            //string s = itf->first;
+            for(map<string, double>:: iterator its = totalscore[i].begin(); its != totalscore[i].end(); its++)
             {
-                if(s == its->first)
-                {
+                //if(s == its->first)
+                //{
                     coutnscore += its->second;
-                }
+                //}
             }
 
-        }
+        //}
 
         score[i] = coutnscore;
         coutnscore = 0.0;
@@ -529,7 +529,7 @@ double getCosineValue(map<string, double> vec1, map<string, double> vec2)
 
 
 
-void pritn(map<string, double> *tf, map<string, int> *rowfreq, map<string, double> idf, map<string, double> score, double *filescore, int numberOfDocuments)
+void pritn(map<string, double> *tf, map<string, int> *rowfreq, map<string, double> idf, map<string, double> *score, double *filescore, int numberOfDocuments)
 {
 
     ofstream file;
@@ -543,27 +543,27 @@ void pritn(map<string, double> *tf, map<string, int> *rowfreq, map<string, doubl
             cout << "File " << i+1 << endl;
 
             map<string, int> :: iterator itr = rowfreq[i].begin();
-            for(map<string, double>:: iterator itf = tf[i].begin(); (itf != tf[i].end() || itr != rowfreq[i].end()); itf++)
+            map<string, double>:: iterator its = score[i].begin();
+            for(map<string, double>:: iterator itf = tf[i].begin(); (itf != tf[i].end() || itr != rowfreq[i].end() || its != score[i].end()); itf++)
             {
-                map<string, double>:: iterator its = score.begin();
                 //map<string, int>:: iterator itrw = rowfreq.begin();
-
                 string s = itf->first;
-                int rc = itr->second;
-                for(map<string, double>:: iterator itdf = idf.begin(); (itdf != idf.end()) || (its != score.end()); itdf++)
+                //int rc = itr->second;
+                for(map<string, double>:: iterator itdf = idf.begin(); (itdf != idf.end()) ; itdf++)
                 {
                     string sd = itdf->first;
                     string ss = its->first;
                     //string sr = itrw->first;
-                    if((s==sd) && (s==ss))
+                    if((s==sd))
                     {
                         //cout << s << "|            " << itf->second << "|              " << itdf->second << "|             " << its->second <<endl;
-                        //cout << s << "," << rc << "," << itf->second << "," << itdf->second << "," << its->second <<endl;
-                        file << s << "," << rc << "," << itf->second << "," << itdf->second << "," << its->second <<endl;
+                        cout << s << "," << itr->second << "," << itf->second << "," << itdf->second << "," << its->second <<endl;
+                        file << s << "," << itr->second << "," << itf->second << "," << itdf->second << "," << its->second <<endl;
                     }
-                    its++;
+
                     //itrw++;
                 }
+                its++;
                 itr++;
             }
             cout << "File " << i+1 << "Score is " << filescore[i] <<endl;
@@ -647,7 +647,7 @@ vector<string> getTextFiles(string path)
 
 int main(void)
 {
-    ifstream ifile, file1, file2, file3, file4, file5;
+    //ifstream ifile, file1, file2, file3, file4, file5;
 
     vector<string> files;
     string dirname = "../SE305 SPL-I/FileArchive";
@@ -664,7 +664,7 @@ int main(void)
     vector<string> withoutforeach[numberofDocument];
     map<string, double> tf[numberofDocument];
     map<string, double> idf;
-    map<string, double> score;
+    map<string, double> score[numberofDocument];
     map<string, int> rowfreq;
     map<string, int> rowcou[numberofDocument];
 
@@ -811,8 +811,20 @@ int main(void)
     idf = IDF2(totalwords,words, numberOfDocuments);
     idfdoubleword = IDF2(totaldoublewords, doublewords, numberOfDocuments);
     //rowfreq = wordFrequency(withoutstopwords);
-    score = getscore(tf, idf, numberOfDocuments);
-    scoredoubleword = getscore(tfdoubleword, idfdoubleword, numberOfDocuments);
+    for(int i=0; i<numberOfDocuments; i++)
+    {
+        score[i] = getscore(tf[i], idf, numberOfDocuments);
+    }
+
+    for(int i=0; i<numberOfDocuments; i++)
+    {
+        for(map<string, double> :: iterator its = score[i].begin(); its != score[i].end(); its++)
+        {
+            cout << its->first << "     " << its->second << endl;
+        }
+    }
+
+    //scoredoubleword = getscore(tfdoubleword, idfdoubleword, numberOfDocuments);
     //map<string, double> :: iterator its = score.begin();
     /*
     for(its = score.begin(); its != score.end(); its++)
@@ -822,7 +834,7 @@ int main(void)
     */
     //int files = words.size();
     double* scores = new double[numberOfDocuments];
-    scores = getScoreforFile(tf,score,numberOfDocuments);
+    scores = getScoreforFile(score,numberOfDocuments);
     /*
     for(int i=0; i<5; i++)
     {
@@ -836,10 +848,10 @@ int main(void)
         i++;
     }
     */
-    //pritn(tf, rowcou, idf, score, scores, numberOfDocuments);
+    pritn(tf, rowcou, idf, score, scores, numberOfDocuments);
     //pritn(tfdoubleword, rowcou, idf, score, scores, numberOfDocuments);
     cout << "total words is: idf " << idf.size() << endl;
-    cout << "total words is: score " << score.size() << endl;
+    //cout << "total words is: score " << score.size() << endl;
     cout << "total words in: rowfreq " << rowfreq.size() << endl;
 
 /*
@@ -854,12 +866,14 @@ int main(void)
     cout << "the cosine value is: " << cosine << endl;
     */
 
+
+
     cosinFile.open("Cosine.csv");
     map<string, double> wordVectorofDocuments[numberOfDocuments];
     double cosinevalues[numberOfDocuments][numberOfDocuments];
     for(int i=0; i<numberOfDocuments; i++)
     {
-    	wordVectorofDocuments[i] = wordVectorofDocument(tfdoubleword[i], scoredoubleword);
+    	wordVectorofDocuments[i] = wordVectorofDocument(tf[i], score[i]);
     }
     cout << "the cosine values are "<< endl;
     //cosinFile << " " << "," <<"file1" << "," << "file2" << "," << "file3" << "," << "file4" << "," << "file5" << endl;
@@ -978,6 +992,7 @@ int main(void)
         rowcou[i].clear();
         withoutforeach[i].clear();
         doublewords[i].clear();
+        score[i].clear();
 
 
     }
@@ -985,7 +1000,7 @@ int main(void)
     withoutstopwords.clear();
     idf.clear();
     idfdoubleword.clear();
-    score.clear();
+    //score.clear();
     scoredoubleword.clear();
     rowfreq.clear();
 }

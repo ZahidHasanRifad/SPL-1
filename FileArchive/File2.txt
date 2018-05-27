@@ -1,16 +1,5 @@
-All text file formats have the advantage that text is easy for humans to read and it is easy to write software to read text, but fixed-width formats are exceptional in that they are especially easy for humans to read because of the regular arrangement of values.  The main advantage of plain text formats is their simplicity: we do not require complex software to create a text file; we do not need esoteric skills beyond being able to type on a keyboard; it is easy for people to view and modify the data.
+﻿A survey conducted by Bangladesh Marma Student Council on the effects of relentless stone mining in over 200 streambeds has been made public. From what is understood, this illegal practice is taking place in five upazilas in the Chittagong Hill Tracts and the removal of stones from streambeds is facilitating the drying up of these tributaries which ultimately feed the Sangu River. The stones help keep the flow in these streams on which at least eleven communities are dependent for sanitation, irrigation and fishing.
 
-    Virtually all software packages can read and write text files. 
-    Plain text files are portable across different computer platforms. 
-    All statistics software will read/write text files. 
-    Most people are able to use at least one piece of software that can read/write text files. 
-    People can read plain text. 
-    Requires only low-level interface.  The main disadvantage of plain text formats is their simplicity.
+Stone mining is most rampant in Thanchi because some road construction is going on in that upazila. These streams stretch 170km and fall under the jurisdiction of the upazila administrations, which apparently turn a blind eye to the long lines of trucks that carry away the broken stones. Ignoring the situation, which is clearly a violation of law, is in effect giving rise to a much bigger problem and that is the condition of the Sangu River which is fed by the streams in the hills.
 
-Lack of standards:
-    No standard way to specify data format. No standard way to express “special characters”. 
-Inefficiency:
-    Can lead to massive redundancy (repetition of values). Speed of access and space efficiency for large data sets. Difficult to store “non-rectangular” data sets. 
-    Internationalization     lack of data integrity measures 
-
-Consider a data set collected on two families, as depicted in Figure 7.4. What would this look like as a flat file? One possible comma-delimited format is shown below: 
+We understand that road construction is a necessary development activity, but this should not be at the cost of local biodiversity and the livelihoods of some 12,000 people who depend on these streams for survival. It is obvious that such illicit activity could not take place without the tacit approval of some corrupt officials who are cohorts of the stone miners. We expect the local administration to put a stop to this damaging activity immediately so that people in these hill communities are not put in peril.
