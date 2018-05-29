@@ -873,6 +873,7 @@ int main(void)
 {
     //vector<string> files;
     string dirname = "../SE305 SPL-I/FileArchive";
+    //cin >> dirname;
     findSingleWordSimilarity(dirname);
     //findPairWordSimilarity(dirname);
 
